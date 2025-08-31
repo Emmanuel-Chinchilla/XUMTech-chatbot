@@ -1,9 +1,9 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MATERIAL_IMPORTS } from '../../../../material.imports';
-import { Chatmessage } from '../../../core/services/interfaces/ChatMessage';
+import { Chatmessage } from '../../../core/interfaces/ChatMessage';
 
 @Component({
     selector: 'message-list',
@@ -14,6 +14,21 @@ import { Chatmessage } from '../../../core/services/interfaces/ChatMessage';
         CommonModule,
         MATERIAL_IMPORTS
     ],
+    styles: [
+        `.enter-animation {
+            animation: slide-fade 1s;
+            }
+            @keyframes slide-fade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }`
+    ]
 })
 export class MessageListComponent {
 
@@ -21,11 +36,9 @@ export class MessageListComponent {
 
     @Input('messages') messages: Chatmessage[] = [];
 
-    // messages = [
-    //     { user: 'Alice', text: 'Hi there!' },
-    //     { user: 'Bob', text: 'Hello Alice!' },
+    // @ViewChild('chatContainer') chatContainer!: ElementRef;
 
-    // ];
+    @ViewChildren('messageElements') messageElements!: QueryList<ElementRef>;
 
     /**
      * Constructor
@@ -48,6 +61,13 @@ export class MessageListComponent {
     }
 
     /**
+     * AfterViewChecked 
+     */
+    ngAfterViewChecked() {
+        this.scrollToLastMessage();
+    }
+
+    /**
      * On destroy
      */
     ngOnDestroy(): void {
@@ -60,5 +80,11 @@ export class MessageListComponent {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
+    scrollToLastMessage() {
+        const items = this.messageElements.toArray();
+        const last = items[items.length - 1];
+        if (last) {
+            last.nativeElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
 }

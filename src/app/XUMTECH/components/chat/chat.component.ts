@@ -1,11 +1,13 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, inject, Output, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MessageListComponent } from './message-list/message-list.component';
 import { MessageInputComponent } from './message-input/message-input.component';
 import { MATERIAL_IMPORTS } from '../../../material.imports';
 import { OverlayRef } from '@angular/cdk/overlay';
+import { ChatbotService } from '../../core/services/chatbot/chatbot.service';
+import { Chatmessage } from '../../core/interfaces/ChatMessage';
 
 @Component({
     selector: 'chat',
@@ -16,20 +18,25 @@ import { OverlayRef } from '@angular/cdk/overlay';
         CommonModule,
         MessageListComponent,
         MessageInputComponent,
-        MATERIAL_IMPORTS
+        MATERIAL_IMPORTS,
     ],
 })
 export class ChatComponent {
 
     private _unsubscribeAll: Subject<any> = new Subject();
-    
+
     @Output() closeOverlay = new EventEmitter<void>();
-    
+
+    messages: Chatmessage[] = [];
+
+    //Service injection
+    chatbotService = inject(ChatbotService);
+
     /**
      * Constructor
      */
     constructor(
-        // private bottomSheetRef: MatBottomSheetRef<ChatComponent>
+        
     ) {
 
     }
@@ -42,7 +49,12 @@ export class ChatComponent {
      * On init
      */
     ngOnInit(): void {
-
+        // Subscribe to the observer for getting messages
+        this.chatbotService.responses$.subscribe((responses) => {
+            if (responses.length > 0) {
+                this.messages = responses;
+            }
+        })
     }
 
     /**

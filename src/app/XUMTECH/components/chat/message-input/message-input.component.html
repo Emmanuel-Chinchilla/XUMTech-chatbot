@@ -1,7 +1,7 @@
 <div class="py-3 px-2 flex nowrap gap-x-1 items-center">
   <mat-form-field appearance="outline" class="w-full mt-4">
-    <input matInput [(ngModel)]="message" type="text" placeholder="Escribe un comentario...">
+    <input matInput (keydown.enter)="sendMessage()" [(ngModel)]="message" type="text" placeholder="Escribe...">
   </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit"><mat-icon>send</mat-icon>Send</button>
+  <button mat-raised-button color="primary" type="button" (click)="sendMessage()"><mat-icon>send</mat-icon>Send</button>
 </div>

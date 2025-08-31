@@ -1,16 +1,14 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MATERIAL_IMPORTS } from '../../../../material.imports';
-import { ChatbotService } from '../../../core/services/chatbot/chatbot.service';
-import { Chatmessage } from '../../../core/interfaces/ChatMessage';
-import { FormatterService } from '../../../core/utils/formatter';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-    selector: 'message-input',
-    templateUrl: './message-input.component.html',
+    selector: 'error-dialog',
+    templateUrl: './error.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
@@ -19,21 +17,15 @@ import { FormatterService } from '../../../core/utils/formatter';
         MATERIAL_IMPORTS
     ],
 })
-export class MessageInputComponent {
+export class ErrorComponent {
 
     private _unsubscribeAll: Subject<any> = new Subject();
-
-    message = '';
-
-    //Service injection
-    chatbotService = inject(ChatbotService);
-    formatterService = inject(FormatterService);
 
     /**
      * Constructor
      */
     constructor(
-
+        @Inject(MAT_DIALOG_DATA) public data: { status: number; message: string }
     ) {
 
     }
@@ -62,24 +54,5 @@ export class MessageInputComponent {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-    /**
-     * Metho for send the question
-     * @returns 
-     */
-    sendMessage() {
-        if (!this.message.trim()) return;
-        // Build the new chat message
-        let newMessage: Chatmessage = { 
-            user: "AppUser",
-            text: this.message,
-            createdAt: this.formatterService.getLocalIsoWithOffset()
-        }
 
-        // Update message list with the user message
-        this.chatbotService.newChatbotMessage(newMessage);
-        // Make the request to the chatbot API with the question
-        this.chatbotService.setResponse({ text: this.message });
-
-        this.message = '';
-    }
 }
