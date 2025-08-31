@@ -31,8 +31,6 @@ export class ChatbotService {
         const question$ = this.AskRequest(question);
         let response: any = await lastValueFrom(question$);
 
-        console.log(response);
-
         if (response.status == 200) {
             this.newChatbotMessage(response.body);
         }
